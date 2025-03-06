@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using APIAgenda.Pagination;
 
 [Route("[controller]")]
 [ApiController]
@@ -29,6 +30,19 @@ public class UsersController : ControllerBase
 
         var eventDtos = events.Select(e => e.ToUserEventResponse()).ToList();
         return Ok(eventDtos);
+    }
+
+    [HttpGet("pagination")]
+    public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersPagination([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var paginationParameters = new PaginationParameters { PageNumber = page, PageSize = pageSize };
+        var users = await _unitOfWork.UserRepository.GetUsersAsync(paginationParameters);
+        if (!users.Any())
+        {
+            return NotFound("Usuários não encontrados");
+        }
+        var userDtos = users.Select(user => user.ToUserResponse()).ToList();
+        return Ok(userDtos);
     }
 
     [HttpGet]

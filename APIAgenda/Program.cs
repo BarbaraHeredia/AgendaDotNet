@@ -1,5 +1,5 @@
 using APIAgenda.Context;
-using APIAgenda.Filters;
+using APIAgenda.Models.Filters;
 using APIAgenda.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

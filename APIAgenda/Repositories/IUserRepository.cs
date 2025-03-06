@@ -1,4 +1,5 @@
 ﻿using APIAgenda.Models;
+using APIAgenda.Pagination;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,6 +7,7 @@ namespace APIAgenda.Repositories
 {
     public interface IUserRepository
     {
+        Task<IEnumerable<User>> GetUsersAsync(PaginationParameters paginationParameters);
         Task<IEnumerable<User>> GetUsersAsync();
         Task<User?> GetUserAsync(string id);
         Task<User> CreateAsync(User user);

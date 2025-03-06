@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 
-namespace APIAgenda.Filters
+namespace APIAgenda.Models.Filters
 {
     public class ApiLoggingFilter : IActionFilter
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace APIAgenda.Filters
+namespace APIAgenda.Models.Filters
 {
     public class ApiExceptionFilter : IExceptionFilter
     {
