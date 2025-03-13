@@ -25,27 +25,60 @@ public class UsersController : ControllerBase
     {
         var paginationParameters = new PaginationParameters { PageNumber = page, PageSize = pageSize };
         var events = await _unitOfWork.UserRepository.GetEventsByUserIdAsync(userId, paginationParameters);
-        if (events == null || !events.Any())
+
+        if (!events.Any())
         {
-            return NotFound("Eventos não encontrados para o usuário informado");
+            return NotFound("Eventos não encontrados para o usuário informado.");
         }
 
-        var eventDtos = events.Select(e => e.ToUserEventResponse()).ToList();
-        return Ok(eventDtos);
+        // Incluindo metadados de paginação na resposta
+        var response = new
+        {
+            Events = events.Select(e => e.ToUserEventResponse()).ToList(),
+            MetaData = new
+            {
+                events.TotalCount,
+                events.PageSize,
+                events.CurrentPage,
+                events.TotalPages,
+                events.HasNext,
+                events.HasPrevious
+            }
+        };
+
+        return Ok(response);
     }
+
 
     [HttpGet("pagination")]
     public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersPagination([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var paginationParameters = new PaginationParameters { PageNumber = page, PageSize = pageSize };
         var users = await _unitOfWork.UserRepository.GetUsersAsync(paginationParameters);
+
         if (!users.Any())
         {
-            return NotFound("Usuários não encontrados");
+            return NotFound("Usuários não encontrados.");
         }
-        var userDtos = users.Select(user => user.ToUserResponse()).ToList();
-        return Ok(userDtos);
+
+        // Incluindo metadados de paginação na resposta
+        var response = new
+        {
+            Users = users.Select(user => user.ToUserResponse()).ToList(),
+            MetaData = new
+            {
+                users.TotalCount,
+                users.PageSize,
+                users.CurrentPage,
+                users.TotalPages,
+                users.HasNext,
+                users.HasPrevious
+            }
+        };
+
+        return Ok(response);
     }
+
 
 
     [HttpGet("{id}", Name = "ObterUsuario")]

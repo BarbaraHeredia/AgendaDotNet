@@ -28,16 +28,16 @@ namespace APIAgenda.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public async Task<IEnumerable<Event>> GetEventsByUserIdAsync(string userId, PaginationParameters paginationParameters)
+        public async Task<PagedList<Event>> GetEventsByUserIdAsync(string userId, PaginationParameters paginationParameters)
         {
-            //return await _context.Events.Where(e => e.UserId == userId).ToListAsync();
+            var query = _context.Events
+                .Where(e => e.UserId == userId)
+                .OrderBy(e => e.Id);
 
-            return await _context.Events
-               .Where(e => e.UserId == userId)
-               .Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize)
-               .Take(paginationParameters.PageSize)
-               .ToListAsync();
+            return await PagedList<Event>.ToPagedList(query, paginationParameters.PageNumber, paginationParameters.PageSize);
         }
+
+
 
         public async Task<User> CreateAsync(User user)
         {
@@ -67,13 +67,15 @@ namespace APIAgenda.Repositories
             return user;
         }
 
-        public async Task<IEnumerable<User>> GetUsersAsync(PaginationParameters paginationParameters)
+        public async Task<PagedList<User>> GetUsersAsync(PaginationParameters paginationParameters)
         {
-            return await _context.Users
+            var query = _context.Users
                 .OrderBy(u => u.UserName)
-                .Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize)
-                .Take(paginationParameters.PageSize)
-                .ToListAsync();
+                .AsQueryable();
+            
+
+            return await PagedList<User>.ToPagedList(query, paginationParameters.PageNumber, paginationParameters.PageSize);
         }
+
     }
 }
