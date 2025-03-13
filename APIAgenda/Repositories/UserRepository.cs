@@ -28,9 +28,15 @@ namespace APIAgenda.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public async Task<IEnumerable<Event>> GetEventsByUserIdAsync(string userId)
+        public async Task<IEnumerable<Event>> GetEventsByUserIdAsync(string userId, PaginationParameters paginationParameters)
         {
-            return await _context.Events.Where(e => e.UserId == userId).ToListAsync();
+            //return await _context.Events.Where(e => e.UserId == userId).ToListAsync();
+
+            return await _context.Events
+               .Where(e => e.UserId == userId)
+               .Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize)
+               .Take(paginationParameters.PageSize)
+               .ToListAsync();
         }
 
         public async Task<User> CreateAsync(User user)

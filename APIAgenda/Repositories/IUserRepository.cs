@@ -8,11 +8,10 @@ namespace APIAgenda.Repositories
     public interface IUserRepository
     {
         Task<IEnumerable<User>> GetUsersAsync(PaginationParameters paginationParameters);
-        Task<IEnumerable<User>> GetUsersAsync();
         Task<User?> GetUserAsync(string id);
         Task<User> CreateAsync(User user);
         Task<User> UpdateAsync(User user);
         Task<User> DeleteAsync(string id);
-        Task<IEnumerable<Event>> GetEventsByUserIdAsync(string userId);
+        Task<IEnumerable<Event>> GetEventsByUserIdAsync(string userId, PaginationParameters paginationParameters);
     }
 }

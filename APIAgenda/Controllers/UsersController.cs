@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using APIAgenda.Pagination;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 [Route("[controller]")]
 [ApiController]
@@ -20,9 +21,10 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("Events/{userId}")]
-    public async Task<ActionResult<IEnumerable<UserEventResponse>>> GetUserEvents(string userId)
+    public async Task<ActionResult<IEnumerable<UserEventResponse>>> GetUserEvents(string userId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var events = await _unitOfWork.UserRepository.GetEventsByUserIdAsync(userId);
+        var paginationParameters = new PaginationParameters { PageNumber = page, PageSize = pageSize };
+        var events = await _unitOfWork.UserRepository.GetEventsByUserIdAsync(userId, paginationParameters);
         if (events == null || !events.Any())
         {
             return NotFound("Eventos não encontrados para o usuário informado");
@@ -45,20 +47,6 @@ public class UsersController : ControllerBase
         return Ok(userDtos);
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserResponse>>> Get()
-    {
-        var users = await _unitOfWork.UserRepository.GetUsersAsync();
-
-        if (!users.Any())
-        {
-            return NotFound("Usuários não encontrados");
-        }
-
-        var userDtos = users.Select(user => user.ToUserResponse()).ToList();
-
-        return Ok(userDtos);
-    }
 
     [HttpGet("{id}", Name = "ObterUsuario")]
     public async Task<ActionResult<UserResponse>> Get(string id)
