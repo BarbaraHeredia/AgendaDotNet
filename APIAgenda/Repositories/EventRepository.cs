@@ -1,5 +1,6 @@
 ﻿using APIAgenda.Context;
 using APIAgenda.Models;
+using APIAgenda.Pagination;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -64,6 +65,15 @@ namespace APIAgenda.Repositories
             }
             _context.Events.Remove(myEvent);
             return myEvent;
+        }
+
+        public async Task<IEnumerable<Event>> GetEventsAsync(PaginationParameters paginationParameters)
+        {
+            return await _context.Events
+                .OrderBy(u => u.Id)
+                .Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize)
+                .Take(paginationParameters.PageSize)
+                .ToListAsync();
         }
     }
 }

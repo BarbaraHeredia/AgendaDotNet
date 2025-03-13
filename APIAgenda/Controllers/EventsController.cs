@@ -1,6 +1,7 @@
 ﻿using APIAgenda.Extensions;
 using APIAgenda.Mappings;
 using APIAgenda.Models;
+using APIAgenda.Pagination;
 using APIAgenda.Repositories;
 using APIAgenda.Request;
 using APIAgenda.Response;
@@ -25,10 +26,11 @@ namespace APIAgenda.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<EventResponse>>> Get()
+        [HttpGet("pagination")]
+        public async Task<ActionResult<IEnumerable<EventResponse>>> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var events = await _unitOfWork.EventRepository.GetEventsAsync();
+            var paginationParameters = new PaginationParameters { PageNumber = page, PageSize = pageSize };
+            var events = await _unitOfWork.EventRepository.GetEventsAsync(paginationParameters);
             if (!events.Any())
             {
                 return NotFound("Eventos não encontrados");
