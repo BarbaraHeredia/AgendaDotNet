@@ -31,12 +31,26 @@ namespace APIAgenda.Controllers
         {
             var paginationParameters = new PaginationParameters { PageNumber = page, PageSize = pageSize };
             var events = await _unitOfWork.EventRepository.GetEventsAsync(paginationParameters);
+            
             if (!events.Any())
             {
                 return NotFound("Eventos não encontrados");
             }
-            var eventDtos = events.Select(e => e.ToEventResponse()).ToList();
-            return Ok(eventDtos);
+
+            var response = new
+            {
+                Events = events.Select(e => e.ToEventResponse()).ToList(),
+                MetaData = new
+                {
+                    events.TotalCount,
+                    events.PageSize,
+                    events.CurrentPage,
+                    events.TotalPages,
+                    events.HasNext,
+                    events.HasPrevious
+                }
+            };
+            return Ok(response);
         }
 
         [HttpGet("{id}", Name = "ObterEvent")]

@@ -7,7 +7,7 @@ namespace APIAgenda.Repositories
 {
     public interface IEventRepository
     {
-        Task<IEnumerable<Event>> GetEventsAsync(PaginationParameters paginationParameters);
+        Task<PagedList<Event>> GetEventsAsync(PaginationParameters paginationParameters);
         Task<Event> GetEventAsync(int id);
         Task<Event> CreateAsync(Event myEvent);
         Task<Event> UpdateAsync(Event myEvent);

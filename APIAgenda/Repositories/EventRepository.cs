@@ -18,7 +18,9 @@ namespace APIAgenda.Repositories
 
         public async Task<IEnumerable<Event>> GetEventsAsync()
         {
-            return await _context.Events.ToListAsync();
+            return await _context.Events
+                .OrderBy(e => e.Id)
+                .ToListAsync();
         }
 
         public async Task<Event> GetEventAsync(int id)
@@ -67,13 +69,14 @@ namespace APIAgenda.Repositories
             return myEvent;
         }
 
-        public async Task<IEnumerable<Event>> GetEventsAsync(PaginationParameters paginationParameters)
+        public async Task<PagedList<Event>> GetEventsAsync(PaginationParameters paginationParameters)
         {
-            return await _context.Events
-                .OrderBy(u => u.Id)
-                .Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize)
-                .Take(paginationParameters.PageSize)
-                .ToListAsync();
+            var query = _context.Events
+                .OrderBy(e => e.Id)
+                .AsQueryable();
+
+            return await PagedList<Event>.ToPagedList(query, paginationParameters.PageNumber, paginationParameters.PageSize);
+
         }
     }
 }
